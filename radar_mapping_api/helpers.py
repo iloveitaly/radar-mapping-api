@@ -7,18 +7,17 @@ from radar_mapping_api.models import GeocodeResult
 if TYPE_CHECKING:
     from radar_mapping_api.client import RadarClient
 
-try:
-    import sentry_sdk
 
-    _HAS_SENTRY = True
-except ImportError:
-    _HAS_SENTRY = False
-
-
-def _capture_sentry_message(message: str, level: str = "info", **extras: object) -> None:
+def _capture_sentry_message(
+    message: str, level: str = "info", **extras: object
+) -> None:
     """Capture a message to Sentry if available."""
-    if _HAS_SENTRY:
+    try:
+        import sentry_sdk  # type: ignore[import-not-found]
+
         sentry_sdk.capture_message(message, level=level, extras=extras)
+    except ImportError:
+        pass
 
 
 def geocode_postal_code(

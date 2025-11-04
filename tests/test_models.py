@@ -20,7 +20,7 @@ class TestGeometry:
 
     def test_invalid_geometry_missing_field(self):
         with pytest.raises(ValidationError):
-            Geometry(type="Point")
+            Geometry(type="Point")  # type: ignore[call-arg]
 
 
 class TestMeta:
@@ -125,7 +125,7 @@ class TestGeocodeResult:
 
     def test_geocode_result_missing_required_field(self):
         with pytest.raises(ValidationError):
-            GeocodeResult(
+            GeocodeResult(  # type: ignore[call-arg]
                 lat=40.7128,
                 postal_code="10007",
                 city="New York",
