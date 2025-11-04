@@ -2,11 +2,23 @@
 
 A Python client library for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation API.
 
+> [!CAUTION]
+> **Pricing Alert for Startups**: While Radar offers an excellent free tier and well-designed APIs, their pricing model has a significant gap that may not work for growing startups. Pricing jumps from free to $20,000/year with no incremental pricing options in between, even when working directly with their startup sales team. If you're building a startup that expects to scale beyond the free tier limits, consider whether this pricing structure fits your growth trajectory.
+
 This library provides a type-safe, production-ready client for interacting with Radar.io's APIs, including:
 - Forward and reverse geocoding
 - Place search
 - Address autocomplete
 - Address validation
+
+## Why This Library?
+
+Radar's [official Python SDK](https://github.com/radarlabs/radar-sdk-python) is severely outdated and has not been maintained in years. It lacks modern Python features, type safety, and support for many current API endpoints. This library was created to provide:
+
+- Up-to-date API coverage
+- Modern Python practices (type hints, Pydantic models, etc.)
+- Active maintenance and bug fixes
+- Production-ready error handling and retry logic
 
 ## Features
 
