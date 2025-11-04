@@ -1,25 +1,16 @@
 """
+Radar.io API client library.
 
-- api docs are here: https://docs.radar.com/api
-- there's no py library that's not very old + unmaintained, so we've built this directly
+API docs: https://docs.radar.com/api
 
-Possible future alternatives:
-
-- https://github.com/fitnr/censusgeocode
-
-TODO
-
-- compact should be used instead of dict construction
-- look into more funcy uses here
-- if `20:17:01 py_dev.1  | 2025-08-24T20:17:01.094386Z [info     ] Retrying app.lib.radar.RadarClient._make_request in 2.0 seconds as it raised HTTPStatusError: Client error '402 Payment Required' for url 'https://api.radar.io/v1/search/autocomplete?query=801&countryCode=US'` we should not retry and error immediately
+This library provides a Python client for the Radar.io geocoding API with retry logic
+and type-safe Pydantic models for responses.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any
 
 import httpx
-import sentry_sdk
-from pydantic import BaseModel
 from tenacity import (
     before_sleep_log,
     retry,
@@ -28,11 +19,11 @@ from tenacity import (
     wait_exponential,
 )
 
-if TYPE_CHECKING:
-    pass
-
-# Global radar client instance
-_radar_client: Optional["RadarClient"] = None
+from radar_mapping_api.models import (
+    GeocodeResponse,
+    SearchPlacesResponse,
+    ValidateAddressResponse,
+)
 
 
 def _is_retryable_httpx_error(exception: BaseException) -> bool:
@@ -49,85 +40,6 @@ def _is_retryable_httpx_error(exception: BaseException) -> bool:
             return False
 
     return True
-
-
-class Geometry(BaseModel):
-    type: str
-    coordinates: list[float]
-
-
-class TimeZone(BaseModel):
-    id: str | None = None
-    name: str
-    code: str
-    currentTime: str
-    utcOffset: int
-    dstOffset: int
-
-
-class Address(BaseModel):
-    latitude: float
-    longitude: float
-    geometry: Geometry
-    country: str
-    countryCode: str
-    countryFlag: str
-    county: str | None = None
-    city: str | None = None
-    state: str | None = None
-    stateCode: str | None = None
-    postalCode: str | None = None
-    layer: str
-    formattedAddress: str
-    addressLabel: str
-    timeZone: TimeZone | None = None
-    distance: float | None = None
-    confidence: str | None = None
-    borough: str | None = None
-    neighborhood: str | None = None
-    number: str | None = None
-    street: str | None = None
-
-
-class Meta(BaseModel):
-    code: int
-
-
-class GeocodeResponse(BaseModel):
-    meta: Meta
-    addresses: list[Address]
-
-
-class Chain(BaseModel):
-    name: str
-    slug: str
-    externalId: str | None = None
-    metadata: dict[str, Any] | None = None
-
-
-class Place(BaseModel):
-    name: str
-    chain: Chain | None = None
-    categories: list[str]
-    location: Geometry
-
-
-class SearchPlacesResponse(BaseModel):
-    meta: Meta
-    places: list[Place]
-
-
-class ValidateAddressResponse(BaseModel):
-    """
-    Response for Radar's address validation endpoint.
-
-    The response includes the validated `address` object and an opaque `result`
-    payload with provider-specific fields.
-    """
-
-    meta: Meta
-    address: Address | None = None
-    result: dict[str, Any] | None = None
 
 
 class RadarClient:
@@ -234,7 +146,6 @@ class RadarClient:
 
     def search_places(
         self,
-        # (lng,lat)
         near: str | None = None,
         chains: str | None = None,
         categories: str | None = None,
@@ -351,7 +262,6 @@ class RadarClient:
         Returns:
             ValidateAddressResponse containing the validated address and provider result.
         """
-        # Using Radar's parameter names as documented; keep explicit typing for linter
         params: dict[str, str] = {"addressLabel": address_label}
         if city:
             params["city"] = city
@@ -366,148 +276,3 @@ class RadarClient:
 
         raw_response = self._make_request("addresses/validate", params)
         return ValidateAddressResponse.model_validate(raw_response)
-
-
-# TODO should be extracted away from Radar
-class GeocodeResult(BaseModel):
-    """
-    Result of geocoding a location with extracted coordinates and address info.
-
-    Meant to be a simple version of what comes back from Radar so we can easily swap out
-    radar with any other system.
-    """
-
-    # this is what we can always count on
-    lat: float
-    lon: float
-
-    # in some cases, Radar or a geoprovider may not have this
-    postal_code: str | None
-    city: str | None
-    state_code: str | None
-    formatted_address: str | None
-
-
-def get_radar_client() -> RadarClient:
-    """
-    Get or create the global radar client instance.
-
-    Returns:
-        RadarClient: The configured radar client instance
-    """
-    global _radar_client
-
-    if _radar_client is None:
-        from app.configuration.radar import RADAR_API_KEY
-
-        _radar_client = RadarClient(api_key=RADAR_API_KEY)
-
-    return _radar_client
-
-
-def geocode_postal_code(
-    *,
-    postal_code: str = "",
-    country: str = "US",
-) -> GeocodeResult | None:
-    """
-    Geocode a zip code and extract coordinates and address information.
-
-    Handles error cases with Sentry logging and returns a standardized result.
-
-    Args:
-        postal_code: The postal code to geocode
-        country: Country code (default: "US")
-
-    Returns:
-        GeocodeResult with lat, lon, city, and state information.
-        Returns None if geocoding fails.
-    """
-    radar_client = get_radar_client()
-
-    location_result = radar_client.forward_geocode(postal_code, country=country)
-
-    if len(location_result.addresses) == 0:
-        sentry_sdk.capture_message(
-            "no geocoding results for zip code",
-            level="info",
-            extras={"zip": postal_code, "country": country},
-        )
-
-        return None
-    else:
-        if len(location_result.addresses) > 1:
-            sentry_sdk.capture_message(
-                "Multiple geocoding results for zip code",
-                extras={
-                    "zip": postal_code,
-                    "results": len(location_result.addresses),
-                },
-            )
-        address = location_result.addresses[0]
-        lat = address.geometry.coordinates[1]
-        lon = address.geometry.coordinates[0]
-
-        return GeocodeResult(
-            lat=lat,
-            lon=lon,
-            postal_code=postal_code,
-            city=address.city,
-            state_code=address.stateCode,
-            formatted_address=address.formattedAddress,
-        )
-
-
-def geocode_coordinates(
-    *,
-    lat: float,
-    lon: float,
-    layers: str = "postalCode,locality,state",
-) -> GeocodeResult | None:
-    """
-    Reverse geocode coordinates and extract address information.
-
-    Handles error cases with Sentry logging and returns a standardized result.
-
-    Args:
-        lat: Latitude
-        lon: Longitude
-        layers: Comma-separated layers to request (default: "postalCode,locality,state")
-
-    Returns:
-        GeocodeResult with lat, lon, zip_code, city, and state information.
-        Returns None if geocoding fails.
-    """
-    radar_client = get_radar_client()
-
-    coordinates = f"{lat},{lon}"
-    location_result = radar_client.reverse_geocode(coordinates, layers=layers)
-
-    if len(location_result.addresses) == 0:
-        sentry_sdk.capture_message(
-            "no geocoding results for coordinates",
-            level="info",
-            extras={"lat": lat, "lon": lon},
-        )
-
-        return None
-    else:
-        if len(location_result.addresses) > 1:
-            sentry_sdk.capture_message(
-                "Multiple geocoding results for coordinates",
-                extras={
-                    "lat": lat,
-                    "lon": lon,
-                    "results": len(location_result.addresses),
-                },
-            )
-        address = location_result.addresses[0]
-
-        return GeocodeResult(
-            lat=lat,
-            lon=lon,
-            postal_code=address.postalCode,
-            city=address.city,
-            state_code=address.stateCode,
-            formatted_address=address.formattedAddress,
-        )
