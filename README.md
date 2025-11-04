@@ -219,7 +219,7 @@ uv run pyright
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.10+
 - httpx
 - pydantic
 - tenacity

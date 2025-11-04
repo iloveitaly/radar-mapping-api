@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A Python client for the Radar.io geocoding, mapping, and geolocation API"
 keywords = ["radar", "radar.io", "geocoding", "geolocation", "mapping", "reverse-geocoding", "places", "api-client"]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.28.1",
     "pydantic>=2.12.3",
