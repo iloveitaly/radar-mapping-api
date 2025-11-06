@@ -1,43 +1,26 @@
-# radar-mapping-api
+# Modern Python Client for Radar.io Geocoding API
 
-A Python client library for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation API.
-
-> [!CAUTION]
-> **Pricing Alert for Startups**: While Radar offers an excellent free tier and well-designed APIs, their pricing model has a significant gap that may not work for growing startups. Pricing jumps from free to $20,000/year with no incremental pricing options in between, even when working directly with their startup sales team. If you're building a startup that expects to scale beyond the free tier limits, consider whether this pricing structure fits your growth trajectory.
-
-This library provides a type-safe, production-ready client for interacting with Radar.io's APIs, including:
-- Forward and reverse geocoding
-- Place search
-- Address autocomplete
-- Address validation
+A Python client for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation APIs.
 
 ## Why This Library?
 
-Radar's [official Python SDK](https://github.com/radarlabs/radar-sdk-python) is severely outdated and has not been maintained in years. It lacks modern Python features, type safety, and support for many current API endpoints. This library was created to provide:
+Radar's [official Python SDK](https://github.com/radarlabs/radar-sdk-python) hasn't been updated in several years and doesn't include support for newer API endpoints.
 
-- Up-to-date API coverage
-- Modern Python practices (type hints, Pydantic models, etc.)
-- Active maintenance and bug fixes
-- Production-ready error handling and retry logic
+I built this to solve a practical problem: I needed a way to interact with Radar's geocoding APIs with type hints and support for their current endpoints. This library provides that.
 
-## Features
-
-- **Type-safe**: Built with Pydantic models for full type safety
-- **Resilient**: Automatic retry logic with exponential backoff
-- **Production-ready**: Error handling and optional Sentry integration
-- **Well-tested**: Comprehensive test suite with 100% coverage
-- **Modern**: Uses httpx for async-capable HTTP requests
+> [!CAUTION]
+> **Pricing Alert for Startups**: Radar offers a free tier, but pricing jumps from free to $20,000/year with no incremental options in between, even when working with their startup sales team. If you're building something that will scale beyond the free tier limits, consider whether this pricing structure fits your growth trajectory.
 
 ## Installation
 
 ```bash
-pip install radar-mapping-api
+uv add radar-mapping-api
 ```
 
-Or with optional Sentry integration:
+For optional Sentry integration:
 
 ```bash
-pip install radar-mapping-api[sentry]
+uv add radar-mapping-api[sentry]
 ```
 
 ## Usage
@@ -47,7 +30,6 @@ pip install radar-mapping-api[sentry]
 ```python
 from radar_mapping_api import RadarClient
 
-# Initialize the client with your API key
 client = RadarClient(api_key="your_radar_api_key")
 ```
 
@@ -135,7 +117,7 @@ if result.address:
 
 ### Helper Functions
 
-The library includes convenient helper functions for common operations:
+The library includes helper functions for common operations:
 
 ```python
 from radar_mapping_api import geocode_postal_code, geocode_coordinates
@@ -163,13 +145,18 @@ if result:
     print(f"State: {result.state_code}")
 ```
 
+## Features
+
+- Type-safe with Pydantic models
+- Automatic retry logic with exponential backoff (up to 6 attempts)
+- Does not retry on HTTP 402 (payment required) errors
+- Optional Sentry integration for logging warnings
+- Uses httpx for async-capable HTTP requests
+- Comprehensive test suite
+
 ## Error Handling
 
-The client includes intelligent retry logic:
-
-- Automatically retries failed requests with exponential backoff (up to 6 attempts)
-- Does not retry on HTTP 402 (Payment Required) errors
-- Raises `httpx.HTTPError` for failed requests after retries
+The client includes retry logic for failed requests:
 
 ```python
 import httpx
@@ -180,21 +167,9 @@ except httpx.HTTPError as e:
     print(f"Request failed: {e}")
 ```
 
-## Sentry Integration
-
-If you have Sentry installed, the helper functions will automatically log warnings for:
-- No geocoding results found
-- Multiple geocoding results (ambiguous queries)
-
-The integration is completely optional - if Sentry is not installed, the library works normally without it.
-
 ## API Reference
 
-### RadarClient
-
-Main client for interacting with the Radar.io API.
-
-#### Methods
+### RadarClient Methods
 
 - `forward_geocode(query, layers=None, country=None, lang=None)` - Convert address to coordinates
 - `reverse_geocode(coordinates, layers=None, lang=None)` - Convert coordinates to address
@@ -204,13 +179,13 @@ Main client for interacting with the Radar.io API.
 
 ### Models
 
-All API responses are returned as Pydantic models with full type safety:
+All API responses are returned as Pydantic models:
 
 - `GeocodeResponse` - Forward/reverse geocoding response
 - `SearchPlacesResponse` - Place search response
 - `ValidateAddressResponse` - Address validation response
 - `GeocodeResult` - Simplified geocoding result
-- `Address` - Detailed address information
+- `Address` - Address information
 - `Place` - Place information
 
 ## Development
@@ -229,22 +204,4 @@ uv run ruff check
 uv run pyright
 ```
 
-## Requirements
-
-- Python 3.10+
-- httpx
-- pydantic
-- tenacity
-
-## License
-
-See LICENSE file for details.
-
-## Links
-
-- [Radar.io API Documentation](https://docs.radar.com/api)
-- [GitHub Repository](https://github.com/iloveitaly/radar-mapping-api)
-
-## Credits
-
-Created by [Michael Bianco](https://github.com/iloveitaly)
+# [MIT License](LICENSE.md)
