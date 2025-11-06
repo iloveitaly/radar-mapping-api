@@ -1,8 +1,8 @@
 # Modern Python Client for Radar.io Geocoding API
 
-A Python client for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation APIs. This library exists because Radar's [official Python SDK](https://github.com/radarlabs/radar-sdk-python) hasn't been maintained in years and lacks support for current API endpoints.
+A Python client for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation APIs. This library exists because Radar's [official Python SDK](https://github.com/radarlabs/radar-sdk-python) hasn't been updated in several years and doesn't include support for newer API endpoints.
 
-I built this to solve a practical problem: I needed a reliable way to interact with Radar's geocoding APIs using modern Python practices. The official SDK is stuck in the past, missing type hints and many current endpoints. This library fills that gap.
+I built this to solve a practical problem: I needed a way to interact with Radar's geocoding APIs with type hints and support for their current endpoints. This library provides that.
 
 > [!CAUTION]
 > **Pricing Alert for Startups**: Radar offers a free tier, but pricing jumps from free to $20,000/year with no incremental options in between, even when working with their startup sales team. If you're building something that will scale beyond the free tier limits, consider whether this pricing structure fits your growth trajectory.
