@@ -10,13 +10,13 @@ I built this to solve a practical problem: I needed a reliable way to interact w
 ## Installation
 
 ```bash
-pip install radar-mapping-api
+uv add radar-mapping-api
 ```
 
 For optional Sentry integration:
 
 ```bash
-pip install radar-mapping-api[sentry]
+uv add radar-mapping-api[sentry]
 ```
 
 ## Usage
@@ -199,11 +199,5 @@ uv run ruff check
 # Type checking
 uv run pyright
 ```
-
-## Links
-
-- [Radar.io API Documentation](https://docs.radar.com/api)
-- [GitHub Repository](https://github.com/iloveitaly/radar-mapping-api)
-- Created by [Michael Bianco](https://github.com/iloveitaly)
 
 # [MIT License](LICENSE.md)
