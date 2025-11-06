@@ -1,6 +1,6 @@
 [project]
 name = "radar-mapping-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python client for the Radar.io geocoding, mapping, and geolocation API"
 keywords = ["radar", "geocoding", "geolocation", "mapping", "reverse-geocoding", "places"]
 readme = "README.md"
