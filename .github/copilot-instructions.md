@@ -7,6 +7,7 @@ Coding instructions for all programming languages:
 - Prefer early returns over nested if statements.
 - Prefer `continue` within a loop vs nested if statements.
 - Prefer smaller functions over larger functions. Break up logic into smaller chunks with well-named functions.
+- Prefer constants with separators: `10_000` is preferred to `10000` (or `10_00` over `1000` in the case of a integer representing cents).
 - Only add comments if the code is not self-explanatory. Do not add obvious code comments.
 - Do not remove existing comments.
 - When I ask you to write code, prioritize simplicity and legibility over covering all edge cases, handling all errors, etc.
@@ -16,6 +17,7 @@ Coding instructions for all programming languages:
 - Do not install missing system packages! Instead, ask me to install them for you.
 - If terminal commands are failing because of missing variables or commands which are unrelated to your current task, stop your work and let me know.
 - Don't worry about fixing lint errors or running lint scripts unless I specifically ask you to.
+- When implementing workarounds for tooling limitations (like using `Any` for unresolvable types) or handling non-obvious edge cases, always add a brief inline comment explaining the technical reasoning.
 
 Use line breaks to organize code into logical groups. Instead of:
 
@@ -34,15 +36,21 @@ if not client_secret_id:
 session_id = client_secret_id.split("_secret")[0]
 ```
 
-**DO NOT FORGET**: keep your responses short, dense, and without fluff. I am a senior, well-educated software engineer, and do not need long explanations.
+**DO NOT FORGET**: keep your responses short, dense, and without fluff. I am a senior, well-educated software engineer, and hate long explanations.
 
-### Agent instructions
+### Import Developer Workflow Rules
 
-Pay careful attention to these instructions when running tests, generating database migrations, or otherwise figuring out how to navigate project development scripts.
+Pay careful attention to these instructions when running tests, generating database migrations, or otherwise figuring out how to operate this project:
 
-- Run python tests with `pytest` only. Do not `cat` the output and do not use `-q`. If tests fail because of a configuration or system error, do not attempt to fix and let me know. I will fix it.
+- Run `just --list` to see all available pre-written workflow development commands.
+- **IMPORTANT:** Never manually set environment variables that are required. You can set optional variables for debugging, but any missing required environment variables is an error that should be reported and you should stop your work immediately.
+- **NEVER** git commit changes. Always let me run any git commands which are not read-only.
+- Do not worry about cleaning up the environment. This is done automatically.
+- Run python code with `uv run python`
+- Run python tests with `pytest` only. If tests fail because of a configuration or system error, do not attempt to fix and let me know. I will fix it.
   - Initially run `pytest --ignore=tests/integration` then only run `pytest tests/integration`
   - When debugging integration tests look at `$PLAYWRIGHT_RESULT_DIRECTORY`. There's a directory for each test failure. In that directory you fill find a `failure.html` containing the rendered DOM of the page on failure and a screenshot of the contents. Use these to debug why it failed.
 - Do not attempt to create or run database migrations. Pause your work and let me know you need a migration run.
-- Use `uv add` to add python packages. No need for `pip compile`, etc.
-- Use `pnpm` and not `pnpm`. Run all `pnpm` commands in the `web/` directory.
+  - If you receive errors about missing migrations, missing tables, database connectivity, etc, stop your work and let me know.
+
+Look at @local.md
