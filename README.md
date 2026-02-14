@@ -1,5 +1,10 @@
 # Modern Python Client for Radar.io Geocoding API
 
+[![Release Notes](https://img.shields.io/github/release/iloveitaly/radar-mapping-api)](https://github.com/iloveitaly/radar-mapping-api/releases)
+[![Downloads](https://static.pepy.tech/badge/radar-mapping-api/month)](https://pepy.tech/project/radar-mapping-api)
+![GitHub CI Status](https://github.com/iloveitaly/radar-mapping-api/actions/workflows/build_and_publish.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Python client for the [Radar.io](https://radar.com) geocoding, mapping, and geolocation APIs.
 
 ## Why This Library?
@@ -204,4 +209,16 @@ uv run ruff check
 uv run pyright
 ```
 
-# [MIT License](LICENSE.md)
+
+## Links
+
+- [Radar.io API Documentation](https://docs.radar.com/api)
+- [GitHub Repository](https://github.com/iloveitaly/radar-mapping-api)
+
+## License
+
+See LICENSE file for details.
+
+---
+
+*This project was created from [iloveitaly/python-package-template](https://github.com/iloveitaly/python-package-template)*
