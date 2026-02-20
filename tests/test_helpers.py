@@ -81,7 +81,6 @@ class TestGeocodePostalCode:
         assert result.postal_code == "10007"
         assert result.city == "New York"
         assert result.state_code == "NY"
-        assert result.country == "United States"
         assert result.country_code == "US"
         assert result.formatted_address == "New York, NY 10007, USA"
 
@@ -134,7 +133,6 @@ class TestGeocodeCoordinates:
         assert result.postal_code == "10007"
         assert result.city == "New York"
         assert result.state_code == "NY"
-        assert result.country == "United States"
         assert result.country_code == "US"
 
     @respx.mock
@@ -184,7 +182,6 @@ class TestGeocodeCoordinates:
         assert result is not None
         assert result.address1 == "123 Main St"
         assert result.address2 is None
-        assert result.country == "United States"
         assert result.country_code == "US"
 
     @respx.mock

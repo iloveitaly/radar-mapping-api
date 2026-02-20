@@ -105,7 +105,6 @@ class TestGeocodeResult:
             postal_code="10007",
             city="New York",
             state_code="NY",
-            country="United States",
             country_code="US",
             formatted_address="New York, NY 10007",
         )
@@ -114,7 +113,6 @@ class TestGeocodeResult:
         assert result.lon == -74.006
         assert result.address1 == "123 Main St"
         assert result.address2 == "Unit 4B"
-        assert result.country == "United States"
         assert result.country_code == "US"
         assert result.postal_code == "10007"
 

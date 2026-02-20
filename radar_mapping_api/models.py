@@ -148,6 +148,5 @@ class GeocodeResult(BaseModel):
     postal_code: str | None
     city: str | None
     state_code: str | None
-    country: str | None = None
     country_code: str | None = None
     formatted_address: str | None

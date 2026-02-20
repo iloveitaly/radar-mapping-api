@@ -74,7 +74,6 @@ def geocode_postal_code(
         postal_code=postal_code,
         city=address.city,
         state_code=address.stateCode,
-        country=address.country,
         country_code=address.countryCode,
         formatted_address=address.formattedAddress,
     )
@@ -136,7 +135,6 @@ def geocode_coordinates(
         postal_code=address.postalCode,
         city=address.city,
         state_code=address.stateCode,
-        country=address.country,
         country_code=address.countryCode,
         formatted_address=address.formattedAddress,
     )
