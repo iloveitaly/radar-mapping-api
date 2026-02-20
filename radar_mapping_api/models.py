@@ -6,11 +6,23 @@ from pydantic import BaseModel
 
 
 class Geometry(BaseModel):
+    """
+    GeoJSON-compliant geometry object.
+
+    Used to represent coordinates for addresses and places in the Radar API.
+    """
+
     type: str
     coordinates: list[float]
 
 
 class TimeZone(BaseModel):
+    """
+    Time zone information for a specific geographical location.
+
+    Includes UTC/DST offsets and current local time.
+    """
+
     id: str | None = None
     name: str
     code: str
@@ -20,6 +32,13 @@ class TimeZone(BaseModel):
 
 
 class Address(BaseModel):
+    """
+    Detailed representation of a physical address.
+
+    Contains granular fields like street, city, and state, along with geographical
+    coordinates and time zone metadata.
+    """
+
     latitude: float
     longitude: float
     geometry: Geometry
@@ -44,15 +63,33 @@ class Address(BaseModel):
 
 
 class Meta(BaseModel):
+    """
+    API response metadata.
+
+    Primarily used to communicate the HTTP status code of the Radar request.
+    """
+
     code: int
 
 
 class GeocodeResponse(BaseModel):
+    """
+    Radar API response for geocoding requests.
+
+    Returns a list of potential address matches for a given query or coordinate.
+    """
+
     meta: Meta
     addresses: list[Address]
 
 
 class Chain(BaseModel):
+    """
+    Business chain data for a place.
+
+    Identifies the parent organization and provides metadata for brands.
+    """
+
     name: str
     slug: str
     externalId: str | None = None
@@ -60,6 +97,12 @@ class Chain(BaseModel):
 
 
 class Place(BaseModel):
+    """
+    A Point of Interest (POI) or specific business location.
+
+    Includes category information and the business chain if applicable.
+    """
+
     name: str
     chain: Chain | None = None
     categories: list[str]
@@ -67,6 +110,12 @@ class Place(BaseModel):
 
 
 class SearchPlacesResponse(BaseModel):
+    """
+    Radar API response for place search requests.
+
+    Returns a list of places matching the search criteria.
+    """
+
     meta: Meta
     places: list[Place]
 
@@ -94,7 +143,11 @@ class GeocodeResult(BaseModel):
 
     lat: float
     lon: float
+    address1: str | None = None
+    address2: str | None = None
     postal_code: str | None
     city: str | None
     state_code: str | None
+    country: str | None = None
+    country_code: str | None = None
     formatted_address: str | None

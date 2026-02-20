@@ -81,6 +81,8 @@ class TestGeocodePostalCode:
         assert result.postal_code == "10007"
         assert result.city == "New York"
         assert result.state_code == "NY"
+        assert result.country == "United States"
+        assert result.country_code == "US"
         assert result.formatted_address == "New York, NY 10007, USA"
 
     @respx.mock
@@ -132,6 +134,8 @@ class TestGeocodeCoordinates:
         assert result.postal_code == "10007"
         assert result.city == "New York"
         assert result.state_code == "NY"
+        assert result.country == "United States"
+        assert result.country_code == "US"
 
     @respx.mock
     def test_geocode_coordinates_no_results(self, radar_client: RadarClient):
@@ -144,6 +148,44 @@ class TestGeocodeCoordinates:
         result = geocode_coordinates(radar_client, lat=0.0, lon=0.0)
 
         assert result is None
+
+    @respx.mock
+    def test_geocode_coordinates_with_street_address(
+        self, radar_client: RadarClient
+    ):
+        response_with_street = {
+            "meta": {"code": 200},
+            "addresses": [
+                {
+                    "latitude": 40.7128,
+                    "longitude": -74.006,
+                    "geometry": {"type": "Point", "coordinates": [-74.006, 40.7128]},
+                    "country": "United States",
+                    "countryCode": "US",
+                    "countryFlag": "🇺🇸",
+                    "number": "123",
+                    "street": "Main St",
+                    "city": "New York",
+                    "stateCode": "NY",
+                    "postalCode": "10007",
+                    "layer": "address",
+                    "formattedAddress": "123 Main St, New York, NY 10007, USA",
+                    "addressLabel": "123 Main St",
+                }
+            ],
+        }
+
+        respx.get("https://api.radar.io/v1/geocode/reverse").mock(
+            return_value=httpx.Response(200, json=response_with_street)
+        )
+
+        result = geocode_coordinates(radar_client, lat=40.7128, lon=-74.006)
+
+        assert result is not None
+        assert result.address1 == "123 Main St"
+        assert result.address2 is None
+        assert result.country == "United States"
+        assert result.country_code == "US"
 
     @respx.mock
     def test_geocode_coordinates_custom_layers(

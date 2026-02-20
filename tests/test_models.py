@@ -100,14 +100,22 @@ class TestGeocodeResult:
         result = GeocodeResult(
             lat=40.7128,
             lon=-74.006,
+            address1="123 Main St",
+            address2="Unit 4B",
             postal_code="10007",
             city="New York",
             state_code="NY",
+            country="United States",
+            country_code="US",
             formatted_address="New York, NY 10007",
         )
 
         assert result.lat == 40.7128
         assert result.lon == -74.006
+        assert result.address1 == "123 Main St"
+        assert result.address2 == "Unit 4B"
+        assert result.country == "United States"
+        assert result.country_code == "US"
         assert result.postal_code == "10007"
 
     def test_geocode_result_with_nulls(self):

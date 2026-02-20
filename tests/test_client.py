@@ -31,8 +31,19 @@ def sample_geocode_response() -> dict:
                 "stateCode": "NY",
                 "postalCode": "10007",
                 "layer": "address",
-                "formattedAddress": "New York, NY 10007, USA",
-                "addressLabel": "New York, NY 10007",
+                "formattedAddress": "841 Broadway, New York, NY 10007, USA",
+                "addressLabel": "841 Broadway",
+                "number": "841",
+                "street": "Broadway",
+                "confidence": "exact",
+                "timeZone": {
+                    "id": "America/New_York",
+                    "name": "Eastern Standard Time",
+                    "code": "EST",
+                    "currentTime": "2026-02-20T13:00:00-05:00",
+                    "utcOffset": -18000,
+                    "dstOffset": 0,
+                },
             }
         ],
     }
@@ -117,7 +128,8 @@ class TestSearchPlaces:
             "places": [
                 {
                     "name": "Starbucks",
-                    "categories": ["coffee-shop"],
+                    "categories": ["food-beverage", "cafe", "coffee-shop"],
+                    "chain": {"name": "Starbucks", "slug": "starbucks"},
                     "location": {"type": "Point", "coordinates": [-74.006, 40.7128]},
                 }
             ],
@@ -179,6 +191,8 @@ class TestValidateAddress:
                 "layer": "address",
                 "formattedAddress": "841 Broadway, New York, NY 10007",
                 "addressLabel": "841 Broadway",
+                "number": "841",
+                "street": "Broadway",
             },
             "result": {},
         }

@@ -63,12 +63,19 @@ def geocode_postal_code(
     lat = address.geometry.coordinates[1]
     lon = address.geometry.coordinates[0]
 
+    address1 = None
+    if address.number and address.street:
+        address1 = f"{address.number} {address.street}"
+
     return GeocodeResult(
         lat=lat,
         lon=lon,
+        address1=address1,
         postal_code=postal_code,
         city=address.city,
         state_code=address.stateCode,
+        country=address.country,
+        country_code=address.countryCode,
         formatted_address=address.formattedAddress,
     )
 
@@ -118,11 +125,18 @@ def geocode_coordinates(
 
     address = location_result.addresses[0]
 
+    address1 = None
+    if address.number and address.street:
+        address1 = f"{address.number} {address.street}"
+
     return GeocodeResult(
         lat=lat,
         lon=lon,
+        address1=address1,
         postal_code=address.postalCode,
         city=address.city,
         state_code=address.stateCode,
+        country=address.country,
+        country_code=address.countryCode,
         formatted_address=address.formattedAddress,
     )
