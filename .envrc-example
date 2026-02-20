@@ -1,6 +1,0 @@
-layout uv
-
-# fill out for integration tests
-export RADAR_API_KEY=
-
-export LOG_LEVEL=DEBUG
