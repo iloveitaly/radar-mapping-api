@@ -148,9 +148,7 @@ class TestGeocodeCoordinates:
         assert result is None
 
     @respx.mock
-    def test_geocode_coordinates_with_street_address(
-        self, radar_client: RadarClient
-    ):
+    def test_geocode_coordinates_with_street_address(self, radar_client: RadarClient):
         response_with_street = {
             "meta": {"code": 200},
             "addresses": [
