@@ -139,3 +139,7 @@ github_repo_set_metadata:
     --description "$(yq  '.project.description' pyproject.toml)" \
     --homepage "$(yq '.project.urls.Repository' pyproject.toml)" \
     --add-topic "$(yq '.project.keywords | join(",")' pyproject.toml)"
+
+# Sets the RADAR_API_KEY in GitHub Secrets using the local environment variable
+github_set_secrets:
+    gh secret set RADAR_API_KEY --body {{ env("RADAR_API_KEY") }}
